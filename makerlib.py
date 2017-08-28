@@ -16,7 +16,7 @@ import matplotlib.cm as cm
 # if not os.path.isdir('pickle_jars'):
 #         os.mkdir('pickle_jars')
 
-def dataframe_maker(startdate, enddate, longitude, latitude, vwnd_file, uwnd_file,
+def wind_direction_df(startdate, enddate, longitude, latitude, vwnd_file, uwnd_file,
                      csv_name=None, pickle_name=None, s=True, ret=False):
 #     need to add something to remove level i.e. iris.Constraint
     vwnd_lst = []
