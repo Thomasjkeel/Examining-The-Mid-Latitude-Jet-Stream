@@ -1,0 +1,1 @@
+see pysal setup.py and how dependencies are called upon
