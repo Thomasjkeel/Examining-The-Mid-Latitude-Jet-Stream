@@ -16,8 +16,8 @@ import matplotlib.cm as cm
 # if not os.path.isdir('pickle_jars'):
 #         os.mkdir('pickle_jars')
 
-def dataframe_maker(startdate, enddate, longitude, latitude, vwnd_file='working_data/vwnd.IGS.48to17.nc',
-                    uwnd_file='working_data/uwnd.IGS.48to17.nc', s=True, ret=False):
+def dataframe_maker(startdate, enddate, longitude, latitude, vwnd_file, uwnd_file,
+                     csv_name=None, pickle_name=None, s=True, ret=False):
 #     need to add something to remove level i.e. iris.Constraint
     vwnd_lst = []
     uwnd_lst = []
@@ -28,21 +28,25 @@ def dataframe_maker(startdate, enddate, longitude, latitude, vwnd_file='working_
     lon = int(longitude)
     lat = int(latitude)
 
-    try:
-        filename = os.path.join(vwnd_file)
-    except:
-        raise KeyboardInterrupt, 'need path to v-wind netcdf4 file'
-    cubes = iris.load(filename)
-    vwind = cubes[0]
-
-    try:
-        filename2 = os.path.join(uwnd_file)
-    except:
-        raise KeyboardInterrupt, 'need path to v-wind netcdf4 file'
-    cubes2 = iris.load(filename2)
-    uwind = cubes2[0]
-
     iris.FUTURE.cell_datetime_objects = True
+
+    try:
+        v_filename = os.path.join(vwnd_file)
+        v_cubes = iris.load(v_filename)
+    except:
+        raise KeyboardInterrupt, 'need path to v-wind netcdf4 file'
+
+    vwind = v_cubes[0]
+
+    try:
+        u_filename = os.path.join(uwnd_file)
+        u_cubes = iris.load(u_filename)
+    except:
+        raise KeyboardInterrupt, 'need path to v-wind netcdf4 file'
+
+    uwind = u_cubes[0]
+
+
     time_c = vwind.coord('time')
 
     try:
@@ -52,31 +56,29 @@ def dataframe_maker(startdate, enddate, longitude, latitude, vwnd_file='working_
         d1 = date(year, month, day)
         delta = d1 - d0
         if delta.days < 0:
-            raise KeyboardInterrupt, 'start date before start of data'
-#         elif delta.days >= 0:
+            raise KeyboardInterrupt, 'start date before start date of data'
+
         start_range = delta.days
 
         year, month, day = enddate.split('-')
         year, month, day = int(year), int(month), int(day)
-        d0 = date(1948, 1, 1)
         d1 = date(year, month, day)
         delta = d1 - d0
         if delta.days < 0 or delta.days <= start_range:
             raise KeyboardInterrupt, 'end date before start of data or start date'
-#         elif delta.days >= 0:
         end_range = delta.days+1
     except:
         raise KeyboardInterrupt, 'needs to be string in format YYYY-MM-DD'
 
 
     for i in range(start_range, end_range):
-        df = ip.as_data_frame(vwind[int('{0}'.format(i))], copy=True)
-        vwnd_lst.append(df[lon][lat])
+        v_df = ip.as_data_frame(vwind[int('{0}'.format(i))], copy=True)
+        vwnd_lst.append(v_df[lon][lat])
 
-        df2 = ip.as_data_frame(uwind[int('{0}'.format(i))], copy=True)
-        uwnd_lst.append(df2[lon][lat])
+        u_df = ip.as_data_frame(uwind[int('{0}'.format(i))], copy=True)
+        uwnd_lst.append(u_df[lon][lat])
 
-        b = str(time_c.cell(int('{0}'.format(i))))[:10]
+        b = str(time_c.cell(int('{0}'.format(i))))[:10] # removes 00:00:00 from dates
         date_lst.append(b)
 
     vws = pd.DataFrame(vwnd_lst,columns=['mean v-wind (m/s)'])
@@ -97,11 +99,11 @@ def dataframe_maker(startdate, enddate, longitude, latitude, vwnd_file='working_
         wind_dir_from.append(wind_dir_trig_from_degrees)
         wind_dir_to.append(wind_dir_trig_to_degrees)
 
-    wd1 = pd.DataFrame(wind_dir_from, columns=['wind direction from (deg)'])
-    wd2 = pd.DataFrame(wind_dir_to, columns=['wind direction to (deg)'])
+    wd_f = pd.DataFrame(wind_dir_from, columns=['wind direction from (deg)'])
+    wd_t = pd.DataFrame(wind_dir_to, columns=['wind direction to (deg)'])
 
-    df = df.join(wd1)
-    df = df.join(wd2)
+    df = df.join(wd_f)
+    df = df.join(wd_t)
 
     for i in range(0, len(df)):
         if df['wind direction from (deg)'][i] >= 348.75 or df['wind direction from (deg)'][i] < 11.25:
@@ -153,8 +155,8 @@ def dataframe_maker(startdate, enddate, longitude, latitude, vwnd_file='working_
             direction = 'NNW'
             card_dir.append(direction)
 
-    dir1 = pd.DataFrame(card_dir, columns=['cardinal direction'])
-    df = df.join(dir1)
+    c_d= pd.DataFrame(card_dir, columns=['cardinal direction'])
+    df = df.join(c_d)
     df['wind speed in direction'] = np.sqrt(df['mean u-wind (m/s)']**2 + df['mean v-wind (m/s)']**2)
 
 
@@ -166,10 +168,27 @@ def dataframe_maker(startdate, enddate, longitude, latitude, vwnd_file='working_
     df = df.reindex(index=pd.date_range(start = firstDate, end = lastDate), fill_value = None)
 
     if s == True:
-        df.to_csv(os.path.join('csv_dataframes', "igs_{0}{1}{2}to{3}{4}{5}_{6}{7}.csv".format(startdate[8:10], startdate[5:7], startdate[2:4],
-                                                                                          enddate[8:10], enddate[5:7], enddate[2:4], str(lon), str(lat))))
-        df.to_pickle(os.path.join('pickle_jars',"igs_{0}{1}{2}to{3}{4}{5}_{6}{7}.pkl".format(startdate[8:10], startdate[5:7], startdate[2:4],
-                                                                                         enddate[8:10], enddate[5:7], enddate[2:4], str(lon), str(lat))))
+        try:
+            for char in csv_name:
+                if char in '.csv':
+                    csv_name = csv_name.replace(char,'')
+            else:
+                pass
+            df.to_csv('{0}.csv'.format(csv_name))
+
+        except:
+            print('No csv_name given')
+
+        try:
+            for char in csv_name:
+                if char in '.pkl':
+                    csv_name = csv_name.replace(char,'')
+
+            else:
+                pass
+            df.to_pickle('{0}.pkl'.format(pickle_name))
+        except:
+            print('No pickle_name given')
 
     if ret == True:
         return df
