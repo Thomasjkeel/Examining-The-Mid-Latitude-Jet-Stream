@@ -6,17 +6,16 @@ import iris.pandas as ip
 import os
 from datetime import datetime, timedelta, date
 import pandas as pd
-from math import *
+import math
 from windrose import WindroseAxes
 import matplotlib.cm as cm
 
-
-plt.rcParams['figure.figsize'] =(12,10)
 # if not os.path.isdir('csv_dataframes'):
 #         os.mkdir('csv_dataframes')
 
 # if not os.path.isdir('pickle_jars'):
 #         os.mkdir('pickle_jars')
+
 def dataframe_maker(startdate, enddate, longitude, latitude, vwnd_file='working_data/vwnd.IGS.48to17.nc',
                     uwnd_file='working_data/uwnd.IGS.48to17.nc', s=True, ret=False):
 #     need to add something to remove level i.e. iris.Constraint
@@ -91,8 +90,8 @@ def dataframe_maker(startdate, enddate, longitude, latitude, vwnd_file='working_
         u_ms = df['mean u-wind (m/s)'][i]
         v_ms = df['mean v-wind (m/s)'][i]
         wind_abs = np.sqrt(u_ms**2 + v_ms**2)
-        wind_dir_trig_to = atan2(u_ms/wind_abs, v_ms/wind_abs)
-        wind_dir_trig_to_degrees = wind_dir_trig_to * 180/pi
+        wind_dir_trig_to = math.atan2(u_ms/wind_abs, v_ms/wind_abs)
+        wind_dir_trig_to_degrees = wind_dir_trig_to * 180/math.pi
         wind_dir_trig_from_degrees = wind_dir_trig_to_degrees + 180
         wind_dir_cardinal = 90 - wind_dir_trig_from_degrees
         wind_dir_from.append(wind_dir_trig_from_degrees)
@@ -254,8 +253,8 @@ def time_series_maker(vwnd_file, uwnd_file, startdate, enddate, longitude, latit
             u_ms = df['mean u-wind (m/s)'][i]
             v_ms = df['mean v-wind (m/s)'][i]
             wind_abs = np.sqrt(u_ms**2 + v_ms**2)
-            wind_dir_trig_to = atan2(u_ms/wind_abs, v_ms/wind_abs)
-            wind_dir_trig_to_degrees = wind_dir_trig_to * 180/pi
+            wind_dir_trig_to = math.atan2(u_ms/wind_abs, v_ms/wind_abs)
+            wind_dir_trig_to_degrees = wind_dir_trig_to * 180/math.pi
             wind_dir_trig_from_degrees = wind_dir_trig_to_degrees + 180
             wind_dir_cardinal = 90 - wind_dir_trig_from_degrees
             wind_dir_from.append(wind_dir_trig_from_degrees)
