@@ -253,8 +253,8 @@ def time_series_maker(vwnd_file, uwnd_file, startdate, enddate, longitude, latit
             u_ms = df['mean u-wind (m/s)'][i]
             v_ms = df['mean v-wind (m/s)'][i]
             wind_abs = np.sqrt(u_ms**2 + v_ms**2)
-            wind_dir_trig_to = atan2(u_ms/wind_abs, v_ms/wind_abs)
-            wind_dir_trig_to_degrees = wind_dir_trig_to * 180/pi
+            wind_dir_trig_to = math.atan2(u_ms/wind_abs, v_ms/wind_abs)
+            wind_dir_trig_to_degrees = wind_dir_trig_to * 180/math.pi
             wind_dir_trig_from_degrees = wind_dir_trig_to_degrees + 180
             wind_dir_cardinal = 90 - wind_dir_trig_from_degrees
             wind_dir_from.append(wind_dir_trig_from_degrees)
