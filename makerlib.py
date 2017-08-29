@@ -10,41 +10,42 @@ import math
 from windrose import WindroseAxes
 import matplotlib.cm as cm
 
-# if not os.path.isdir('csv_dataframes'):
-#         os.mkdir('csv_dataframes')
 
-# if not os.path.isdir('pickle_jars'):
-#         os.mkdir('pickle_jars')
+def subset_nc(filename, level=300, lat_min=20, lat_max=90, lon_min=180, lon_max=340):
+    """A function to subnet the netCDF4 file (.nc) which can be adjusted to extract
+     only the bits you need when making your dataframe"""
+   cubes = iris.load(filename)
+   subset = cubes[0]
+   subset = subset.extract(
+                                    iris.Constraint(latitude=lambda cell: lat_min <= cell < lat_max+1,
+                                    longitude=lambda cell: lon_min <= cell < lon_max+1,
+                                    Level=lambda cell: level <= cell < level+1))
+    return subset
+# need to add dates to this
 
-def wind_direction_df(startdate, enddate, longitude, latitude, vwnd_file, uwnd_file,
+def wind_direction_df(startdate, enddate, lon, lat, level, vwnd_file, uwnd_file,
                      csv_name=None, pickle_name=None, s=True, ret=False):
-#     need to add something to remove level i.e. iris.Constraint
+
     vwnd_lst = []
     uwnd_lst = []
     date_lst = []
     card_dir = []
     wind_dir_to = []
     wind_dir_from = []
-    lon = int(longitude)
-    lat = int(latitude)
+    lon = int(lon)
+    lat = int(lat)
 
     iris.FUTURE.cell_datetime_objects = True
 
     try:
-        v_filename = os.path.join(vwnd_file)
-        v_cubes = iris.load(v_filename)
+        vwind = subset_nc(vwnd_file, level=level, lat_min=lat, lat_max=lat, lon_min=lon, lon_max=lon)
     except:
         raise KeyboardInterrupt, 'need path to v-wind netcdf4 file'
-
-    vwind = v_cubes[0]
 
     try:
-        u_filename = os.path.join(uwnd_file)
-        u_cubes = iris.load(u_filename)
+        uwind = subset_nc(uwnd_file, level=level, lat_min=lat, lat_max=lat, lon_min=lon, lon_max=lon)
     except:
-        raise KeyboardInterrupt, 'need path to v-wind netcdf4 file'
-
-    uwind = u_cubes[0]
+        raise KeyboardInterrupt, 'need path to u-wind netcdf4 file'
 
 
     time_c = vwind.coord('time')
@@ -197,30 +198,26 @@ def wind_direction_df(startdate, enddate, longitude, latitude, vwnd_file, uwnd_f
         print('done!')
 
 
-def time_series_maker(vwnd_file, uwnd_file, startdate, enddate, longitude, latitude, variable, myWindow, running_mean=False):
+def time_series_maker(vwnd_file, uwnd_file, startdate, enddate, lon, lat, variable, myWindow, running_mean=False):
     vwnd_lst = []
     uwnd_lst = []
     date_lst = []
     card_dir = []
     wind_dir_to = []
     wind_dir_from = []
-    lon = int(longitude)
-    lat = int(latitude)
+    lon = int(lon)
+    lat = int(lat)
 
-
+    # NEED TO work out how to work with time in subset_nc() i.e. using delta days
     try:
-        filename = os.path.join(vwnd_file)
+        vwind = subset_nc(vwnd_file, lat_min=lat, lat_max=lat, lon_min=lon, lon_max=lon)
     except:
         raise KeyboardInterrupt, 'need path to v-wind netcdf4 file'
-    cubes = iris.load(filename)
-    vwind = cubes[0]
 
     try:
-        filename2 = os.path.join(uwnd_file)
+        uwind = subset_nc(uwnd_file, lat_min=lat, lat_max=lat, lon_min=lon, lon_max=lon)
     except:
-        raise KeyboardInterrupt, 'need path to v-wind netcdf4 file'
-    cubes2 = iris.load(filename2)
-    uwind = cubes2[0]
+        raise KeyboardInterrupt, 'need path to u-wind netcdf4 file'
 
     iris.FUTURE.cell_datetime_objects = True
     time_c = vwind.coord('time')
@@ -233,7 +230,6 @@ def time_series_maker(vwnd_file, uwnd_file, startdate, enddate, longitude, latit
         delta = d1 - d0
         if delta.days < 0:
             raise KeyboardInterrupt, 'start date before start of data'
-#         elif delta.days >= 0:
         start_range = delta.days
 
         year, month, day = enddate.split('-')
@@ -354,8 +350,8 @@ def time_series_maker(vwnd_file, uwnd_file, startdate, enddate, longitude, latit
         raise KeyboardInterrupt, 'enter valid variable'
 
 
-def windrose_maker(startdate, enddate, longitude, latitude, title, filename=None, yticks=None, save=False, to_return=True):
-    df = dataframe_maker(startdate, enddate, longitude, latitude, s=False, ret=True)
+def windrose_maker(startdate, enddate, lon, lat, title, filename=None, yticks=None, save=False, to_return=True):
+    df = dataframe_maker(startdate, enddate, lon, lat, s=False, ret=True)
 
     df.name = title
     df.filename = filename
