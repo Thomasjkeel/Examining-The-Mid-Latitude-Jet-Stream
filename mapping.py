@@ -3,31 +3,22 @@ import os
 from netCDF4 import Dataset
 from mpl_toolkits.basemap import Basemap
 import numpy as np
+from subset import subset_nc
 
-def map_maker(data, date_needed, llat=20, llon=180, ulat=90, ulon=320., vmin=-60, vmax=60, colorbar=True):
+
+def map_maker(data, date_needed, level, llat=20, llon=180, ulat=90, ulon=320, vmin=-60, vmax=60, colorbar=True):
+    subset = subset_nc(filename=data, startdate=date_needed, enddate=date_needed, level=300, lat_min=llat, lon_min=llon,
+     lat_max=ulat, lon_max=ulon)
+    iris.io.save(subset,'delete_this.nc')
+    fh = Dataset('delete_this.nc')
+    os.remove('delete_this.nc')
     try:
-        year, month, day = date_needed.split('-')
-        year, month, day = int(year), int(month), int(day)
-        d0 = date(1948, 1, 1)
-        d1 = date(year, month, day)
-        delta = d1 - d0
-        if delta.days < 0:
-            raise KeyboardInterrupt, 'date before start of data'
-        day = delta.days
+        vwind = fh.variables['vwnd']
+        tmax_units = fh.variables['vwnd'].units
     except:
-        raise KeyboardInterrupt, 'needs to be YYYY-MM-DD'
-
-    if data == 'v-wind':
-        filename = os.path.join('working_data/vwind.IGS.77to17.nc')
-        fh = Dataset(filename)
-        vwind = fh.variables['vwnd'][day]
+        vwind = fh.variables['vwnd']
         tmax_units = fh.variables['vwnd'].units
 
-    elif data == 'u-wind':
-        filename = os.path.join('working_data/uwind.IGS.77to17.nc')
-        fh = Dataset(filename)
-        vwind = fh.variables['uwnd'][day] # day from 01-01-1977
-        tmax_units = fh.variables['uwnd'].units
 
     lons = fh.variables['lon'][:]
     lats = fh.variables['lat'][:]
