@@ -5,7 +5,7 @@ def windrose_maker(vwnd_file, uwnd_file, startdate, enddate, level, lon, lat, ti
          level=level, lat=lat, lon=lon, s=False, ret=True)
 
      except:
-         raise KeyboardInterrupt, 'dataframe maker has failed'
+        raise KeyboardInterrupt, 'dataframe maker has failed'
 
     df.name = title
     df.filename = filename
@@ -26,6 +26,6 @@ def windrose_maker(vwnd_file, uwnd_file, startdate, enddate, level, lon, lat, ti
     #     plt.close()
     if to_return == True:
         return ax
-        
+
     else:
         print('done!, not returned')
