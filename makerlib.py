@@ -24,13 +24,13 @@ def wind_direction_df(startdate, enddate, lon, lat, level, vwnd_file, uwnd_file,
     lon = int(lon)
     lat = int(lat)
 
-    # iris.FUTURE.cell_datetime_objects = False
+    iris.FUTURE.cell_datetime_objects = False
 
     try:
         vwind = subset_nc(filename=vwnd_file, startdate=startdate, enddate=enddate,
          level=level, lat_min=lat, lat_max=lat, lon_min=lon, lon_max=lon)
     except:
-        raise KeyboardInterrupt, 'need path to v-wind netcdf4 file'
+        raise KeyboardInterrupt, 'need path to v-wind netcdf4 file OR try setting iris.FUTURE.cell_datetime_objects to False'
 
     try:
         uwind = subset_nc(filename=uwnd_file,startdate=startdate, enddate=enddate,
