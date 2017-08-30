@@ -178,51 +178,34 @@ def time_series_maker(vwnd_file, uwnd_file, startdate, enddate, lon, lat, variab
     lon = int(lon)
     lat = int(lat)
 
-    # NEED TO work out how to work with time in subset_nc() i.e. using delta days
-    try:
-        vwind = subset_nc(vwnd_file, lat_min=lat, lat_max=lat, lon_min=lon, lon_max=lon)
-    except:
-        raise KeyboardInterrupt, 'need path to v-wind netcdf4 file'
+    time_c = vwind.coord('time')
+
+    iris.FUTURE.cell_datetime_objects = False
 
     try:
-        uwind = subset_nc(uwnd_file, lat_min=lat, lat_max=lat, lon_min=lon, lon_max=lon)
+        vwind = subset_nc(filename=vwnd_file, startdate=startdate, enddate=enddate,
+         level=level, lat_min=lat, lat_max=lat, lon_min=lon, lon_max=lon)
+    except:
+        raise KeyboardInterrupt, 'need path to v-wind netcdf4 file OR try setting iris.FUTURE.cell_datetime_objects to False'
+
+    try:
+        uwind = subset_nc(filename=uwnd_file,startdate=startdate, enddate=enddate,
+         level=level, lat_min=lat, lat_max=lat, lon_min=lon, lon_max=lon)
     except:
         raise KeyboardInterrupt, 'need path to u-wind netcdf4 file'
 
-    iris.FUTURE.cell_datetime_objects = True
+
     time_c = vwind.coord('time')
 
-    try:
-        year, month, day = startdate.split('-')
-        year, month, day = int(year), int(month), int(day)
-        d0 = date(1977, 1, 1)
-        d1 = date(year, month, day)
-        delta = d1 - d0
-        if delta.days < 0:
-            raise KeyboardInterrupt, 'start date before start of data'
-        start_range = delta.days
+    for i in range(len(vwind.coord('time').points)):
+        iris.FUTURE.cell_datetime_objects = True
+        v_df = vwind.data[i]
+        vwnd_lst.append(v_df)
 
-        year, month, day = enddate.split('-')
-        year, month, day = int(year), int(month), int(day)
-        d0 = date(1977, 1, 1)
-        d1 = date(year, month, day)
-        delta = d1 - d0
-        if delta.days < 0 or delta.days <= start_range:
-            raise KeyboardInterrupt, 'end date before start of data or start date'
-#         elif delta.days >= 0:
-        end_range = delta.days+1
-    except:
-        raise KeyboardInterrupt, 'needs to be string in format YYYY-MM-DD'
+        u_df = uwind.data[i]
+        uwnd_lst.append(u_df)
 
-
-    for i in range(start_range, end_range):
-        df = ip.as_data_frame(vwind[int('{0}'.format(i))], copy=True)
-        vwnd_lst.append(df[lon][lat])
-
-        df2 = ip.as_data_frame(uwind[int('{0}'.format(i))], copy=True)
-        uwnd_lst.append(df2[lon][lat])
-
-        b = str(time_c.cell(int('{0}'.format(i))))[:10]
+        b = str(time_c.cell(i))[:10] # removes 00:00:00 from dates
         date_lst.append(b)
 
     vws = pd.DataFrame(vwnd_lst,columns=['mean v-wind (m/s)'])
