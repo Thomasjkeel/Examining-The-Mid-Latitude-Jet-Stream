@@ -7,8 +7,6 @@ import os
 from datetime import datetime, timedelta, date
 import pandas as pd
 import math
-from windrose import WindroseAxes
-import matplotlib.cm as cm
 from subset import subset_nc
 
 
