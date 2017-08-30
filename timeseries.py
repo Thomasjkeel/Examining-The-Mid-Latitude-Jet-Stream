@@ -1,9 +1,16 @@
-def time_series_maker(vwnd_file, uwnd_file, startdate, enddate, lon, lat, variable, myWindow=24, running_mean=False):
+from makerlib import wind_direction_df
+
+def time_series_maker(vwnd_file, uwnd_file, startdate, enddate, level, lon, lat, variable, print_vars=False, myWindow=24, running_mean=False):
     try:
         df = wind_direction_df(vwnd_file=vwnd_file, uwnd_file=uwnd_file, startdate=startdate, enddate=enddate,
          level=level, lat=lat, lon=lon, s=False, ret=True)
+
     except:
-        raise KeyboardInterrupt, 'df maker failed'
+        raise KeyboardInterrupt, 'dataframe maker has failed'
+
+    if print_vars == True:
+        print('valid variables: ', list(df.columns.values))
+        return
 
     if running_mean == True:
         try:
@@ -12,13 +19,11 @@ def time_series_maker(vwnd_file, uwnd_file, startdate, enddate, lon, lat, variab
             mw.plot(style='-r', label = "{0}hr Moving Window".format(myWindow))
             return fig
         except:
-            raise KeyboardInterrupt, 'enter valid variable'
+            raise KeyboardInterrupt, 'enter valid variable from list: {0})'.format(list(df.columns.values))
 
     else:
         try:
             fig = df[variable].plot()
             return fig
         except:
-            raise KeyboardInterrupt, 'enter valid variable'
-
-    
+            raise KeyboardInterrupt, 'enter valid variable from list: {0})'.format(list(df.columns.values))
