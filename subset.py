@@ -3,10 +3,12 @@ import os
 import iris.pandas as ip
 import datetime
 
+
 iris.FUTURE.netcdf_promote = True
 iris.FUTURE.cell_datetime_objects=False
 
 def subset_nc(filename, startdate, enddate, level=300, lat_min=20, lat_max=90, lon_min=180, lon_max=340):
+
     """A function to subnet the netCDF4 file (.nc) which can be adjusted to extract
      only the bits you need when making your dataframe"""
 
@@ -38,6 +40,6 @@ def subset_nc(filename, startdate, enddate, level=300, lat_min=20, lat_max=90, l
                                         Level=lambda cell: level <= cell < level+1,
                                                     time=lambda cell: int(s_val) <= cell < int(e_val)))
     except:
-        raise KeyboardInterrupt, 'variables out of range of the data\'s dimensions'
-        
+        raise KeyboardInterrupt, 'variables out of range of the data\'s dimensions OR try setting iris.FUTURE.cell_datetime_objects to False'
+
     return subset

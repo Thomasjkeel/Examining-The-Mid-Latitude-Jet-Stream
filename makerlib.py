@@ -9,19 +9,8 @@ import pandas as pd
 import math
 from windrose import WindroseAxes
 import matplotlib.cm as cm
+from subset import subset_nc
 
-
-def subset_nc(filename, level=300, lat_min=20, lat_max=90, lon_min=180, lon_max=340):
-    """A function to subnet the netCDF4 file (.nc) which can be adjusted to extract
-     only the bits you need when making your dataframe"""
-   cubes = iris.load(filename)
-   subset = cubes[0]
-   subset = subset.extract(
-                                    iris.Constraint(latitude=lambda cell: lat_min <= cell < lat_max+1,
-                                    longitude=lambda cell: lon_min <= cell < lon_max+1,
-                                    Level=lambda cell: level <= cell < level+1))
-    return subset
-# need to add dates to this
 
 def wind_direction_df(startdate, enddate, lon, lat, level, vwnd_file, uwnd_file,
                      csv_name=None, pickle_name=None, s=True, ret=False):
@@ -35,51 +24,32 @@ def wind_direction_df(startdate, enddate, lon, lat, level, vwnd_file, uwnd_file,
     lon = int(lon)
     lat = int(lat)
 
-    iris.FUTURE.cell_datetime_objects = True
+    iris.FUTURE.cell_datetime_objects = False
 
     try:
-        vwind = subset_nc(vwnd_file, level=level, lat_min=lat, lat_max=lat, lon_min=lon, lon_max=lon)
+        vwind = subset_nc(filename=vwnd_file, startdate=startdate, enddate=enddate,
+         level=level, lat_min=lat, lat_max=lat, lon_min=lon, lon_max=lon)
     except:
         raise KeyboardInterrupt, 'need path to v-wind netcdf4 file'
 
     try:
-        uwind = subset_nc(uwnd_file, level=level, lat_min=lat, lat_max=lat, lon_min=lon, lon_max=lon)
+        uwind = subset_nc(filename=uwnd_file,startdate=startdate, enddate=enddate,
+         level=level, lat_min=lat, lat_max=lat, lon_min=lon, lon_max=lon)
     except:
         raise KeyboardInterrupt, 'need path to u-wind netcdf4 file'
 
 
     time_c = vwind.coord('time')
 
-    try:
-        year, month, day = startdate.split('-')
-        year, month, day = int(year), int(month), int(day)
-        d0 = date(1948, 1, 1)
-        d1 = date(year, month, day)
-        delta = d1 - d0
-        if delta.days < 0:
-            raise KeyboardInterrupt, 'start date before start date of data'
+    for i in range(len(vwind.coord('time').points)):
+        iris.FUTURE.cell_datetime_objects = True
+        v_df = vwind.data[i]
+        vwnd_lst.append(v_df)
 
-        start_range = delta.days
+        u_df = uwind.data[i]
+        uwnd_lst.append(u_df)
 
-        year, month, day = enddate.split('-')
-        year, month, day = int(year), int(month), int(day)
-        d1 = date(year, month, day)
-        delta = d1 - d0
-        if delta.days < 0 or delta.days <= start_range:
-            raise KeyboardInterrupt, 'end date before start of data or start date'
-        end_range = delta.days+1
-    except:
-        raise KeyboardInterrupt, 'needs to be string in format YYYY-MM-DD'
-
-
-    for i in range(start_range, end_range):
-        v_df = ip.as_data_frame(vwind[int('{0}'.format(i))], copy=True)
-        vwnd_lst.append(v_df[lon][lat])
-
-        u_df = ip.as_data_frame(uwind[int('{0}'.format(i))], copy=True)
-        uwnd_lst.append(u_df[lon][lat])
-
-        b = str(time_c.cell(int('{0}'.format(i))))[:10] # removes 00:00:00 from dates
+        b = str(time_c.cell(i))[:10] # removes 00:00:00 from dates
         date_lst.append(b)
 
     vws = pd.DataFrame(vwnd_lst,columns=['mean v-wind (m/s)'])
