@@ -24,7 +24,7 @@ def wind_direction_df(startdate, enddate, lon, lat, level, vwnd_file, uwnd_file,
     lon = int(lon)
     lat = int(lat)
 
-    iris.FUTURE.cell_datetime_objects = False
+    # iris.FUTURE.cell_datetime_objects = False
 
     try:
         vwind = subset_nc(filename=vwnd_file, startdate=startdate, enddate=enddate,
