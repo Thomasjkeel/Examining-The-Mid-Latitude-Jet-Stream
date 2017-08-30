@@ -166,25 +166,3 @@ def wind_direction_df(startdate, enddate, lon, lat, level, vwnd_file, uwnd_file,
 
     else:
         print('done!')
-
-def windrose_maker(startdate, enddate, lon, lat, title, filename=None, yticks=None, save=False, to_return=True):
-    df = dataframe_maker(startdate, enddate, lon, lat, s=False, ret=True)
-
-    df.name = title
-    df.filename = filename
-    plt.rcParams['axes.titlepad'] = 20
-    ax = WindroseAxes.from_ax()
-    ax.contourf(df['wind direction from (deg)'], df['wind speed in direction'], bins=np.arange(0, 90, 10), cmap=cm.hot)
-    ax.set_legend()
-    ax.legend(loc=6, bbox_to_anchor=(1.0,0.2), title = 'm/s')
-    ax.set_title(df.name, size = 16)
-    if yticks == None:
-        pass
-    else:
-        ax.set_yticks(np.array(yticks));# six labels on original
-        # ax.set_yticklabels(['200 (n)', '400 (n)', '600 (n)', '800 (n)', '1000 (n)'])
-    if save == True:
-        plt.savefig(os.path.join('figures','{0}_windrose.png'.format(df.filename)), bbox_inches='tight')
-        plt.close()
-    if to_return == True:
-        return ax
