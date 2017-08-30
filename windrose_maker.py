@@ -1,4 +1,9 @@
 from makerlib import wind_direction_df
+import matplotlib.pyplot as plt
+from windrose import WindroseAxes
+import numpy as np
+import matplotlib.cm as cm
+
 def windrose_maker(vwnd_file, uwnd_file, startdate, enddate, level, lon, lat, title=None, filename=None, yticks=None, to_return=True): # save=False
     try:
         df = wind_direction_df(vwnd_file=vwnd_file, uwnd_file=uwnd_file, startdate=startdate, enddate=enddate,
