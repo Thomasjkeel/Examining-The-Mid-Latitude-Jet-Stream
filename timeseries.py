@@ -1,9 +1,9 @@
-from makerlib import wind_direction_df
+import makerlib
 
 def time_series_maker(vwnd_file, uwnd_file, startdate, enddate, level, lon, lat, variable, print_vars=False, myWindow=24, running_mean=False):
     try:
-        df = wind_direction_df(vwnd_file=vwnd_file, uwnd_file=uwnd_file, startdate=startdate, enddate=enddate,
-         level=level, lat=lat, lon=lon, s=False, ret=True)
+        df = makerlib.wind_direction_df(vwnd_file=vwnd_file, uwnd_file=uwnd_file, startdate=startdate, enddate=enddate,
+                                        level=level, lat=lat, lon=lon, s=False, ret=True)
 
     except:
         raise KeyboardInterrupt, 'dataframe maker has failed'

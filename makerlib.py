@@ -1,10 +1,5 @@
 import iris
-from netCDF4 import Dataset
-import matplotlib.pyplot as plt
 import numpy as np
-import iris.pandas as ip
-import os
-from datetime import datetime, timedelta, date
 import pandas as pd
 import math
 from subset import subset_nc

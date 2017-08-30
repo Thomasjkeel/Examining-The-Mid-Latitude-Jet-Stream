@@ -1,6 +1,4 @@
 import iris
-import os
-import iris.pandas as ip
 import datetime
 
 
