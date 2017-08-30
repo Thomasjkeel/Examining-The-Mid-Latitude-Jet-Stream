@@ -1,6 +1,5 @@
-from datetime import datetime, timedelta, date
+from datetime import date
 import os
-import matplotlib.pyplot as plt
 from netCDF4 import Dataset
 from mpl_toolkits.basemap import Basemap
 import numpy as np
