@@ -12,7 +12,10 @@ def subset_nc(filename, startdate, enddate, level=300, lat_min=20, lat_max=90, l
 
     try:
         cubes = iris.load(filename)
-        subset = cubes[0]
+        if len(cubes) == 1:
+            subset = cubes[0]
+        else:
+            subset = cubes[1]
     except:
         raise KeyboardInterrupt, 'need path to v-wind netcdf4 file'
 
