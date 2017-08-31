@@ -133,24 +133,26 @@ def wind_direction_df(startdate, enddate, lon, lat, level, vwnd_file, uwnd_file,
 
     if s == True:
         try:
-            for char in csv_name:
-                if char in '.csv':
-                    csv_name = csv_name.replace(char,'')
-            else:
-                pass
-            df.to_csv('{0}.csv'.format(csv_name))
+            if csv_name != None:
+                for char in csv_name:
+                    if char in '.csv':
+                        csv_name = csv_name.replace(char,'')
+                    else:
+                        pass
+                df.to_csv('{0}.csv'.format(csv_name))
 
         except:
             print('No csv_name given')
 
         try:
-            for char in pickle_name:
-                if char in '.pkl':
-                    pickle_name = pickle_name.replace(char,'')
+            if pickle_name != None:
+                for char in pickle_name:
+                    if char in '.pkl':
+                        pickle_name = pickle_name.replace(char,'')
 
-            else:
-                pass
-            df.to_pickle('{0}.pkl'.format(pickle_name))
+                    else:
+                        pass
+                df.to_pickle('{0}.pkl'.format(pickle_name))
         except:
             print('No pickle_name given')
 
