@@ -144,9 +144,9 @@ def wind_direction_df(startdate, enddate, lon, lat, level, vwnd_file, uwnd_file,
             print('No csv_name given')
 
         try:
-            for char in csv_name:
+            for char in pickle_name:
                 if char in '.pkl':
-                    csv_name = csv_name.replace(char,'')
+                    pickle_name = pickle_name.replace(char,'')
 
             else:
                 pass
