@@ -132,28 +132,25 @@ def wind_direction_df(startdate, enddate, lon, lat, level, vwnd_file, uwnd_file,
     df = df.reindex(index=pd.date_range(start = firstDate, end = lastDate), fill_value = None)
 
     if s == True:
-        try:
-            if csv_name != None:
-                for char in csv_name:
-                    if char in '.csv':
-                        csv_name = csv_name.replace(char,'')
-                    else:
-                        pass
-                df.to_csv('{0}.csv'.format(csv_name))
+        if csv_name != None:
+            for char in csv_name:
+                if char in '.csv':
+                    csv_name = csv_name.replace(char,'')
+                else:
+                    pass
+            df.to_csv('{0}.csv'.format(csv_name))
 
-        except:
+        else:
             print('No csv_name given')
 
-        try:
-            if pickle_name != None:
-                for char in pickle_name:
-                    if char in '.pkl':
-                        pickle_name = pickle_name.replace(char,'')
-
-                    else:
-                        pass
-                df.to_pickle('{0}.pkl'.format(pickle_name))
-        except:
+        if pickle_name != None:
+            for char in pickle_name:
+                if char in '.pkl':
+                    pickle_name = pickle_name.replace(char,'')
+                else:
+                    pass
+            df.to_pickle('{0}.pkl'.format(pickle_name))
+        else:
             print('No pickle_name given')
 
     if ret == True:
