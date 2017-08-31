@@ -4,6 +4,7 @@ from netCDF4 import Dataset
 from mpl_toolkits.basemap import Basemap
 import numpy as np
 from subset import subset_nc
+import iris
 
 
 def map_maker(data, date_needed, level, llat=20, llon=180, ulat=90, ulon=320, vmin=-60, vmax=60, colorbar=True):
