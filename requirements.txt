@@ -1,1 +1,7 @@
-see pysal setup.py and how dependencies are called upon
+iris
+pandas
+numpy
+math
+matplotlib.pyplot
+matplotlib.cm
+windrose
