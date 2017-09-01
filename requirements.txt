@@ -5,3 +5,7 @@ math
 matplotlib.pyplot
 matplotlib.cm
 windrose
+datetime
+os
+netCDF4
+mpl_toolkits.basemap
