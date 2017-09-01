@@ -4,13 +4,13 @@ The example in this repository covers the use of (u- and v- component) wind spee
 
 ## Required packages
 iris  
-pandas
-numpy
-math
-matplotlib.pyplot
-datetime
-os
-netCDF4
+pandas  
+numpy  
+math  
+matplotlib.pyplot  
+datetime  
+os  
+netCDF4  
 
 #### Mapping
 mpl_toolkits.basemap
