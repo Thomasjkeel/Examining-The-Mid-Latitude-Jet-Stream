@@ -3,7 +3,7 @@ Methods that assist with reading, mapping, ploting and analysing NetCDF4 files f
 The example in this repository covers the use of (u- and v- component) wind speed (at 300hPa) from the NCEP/NCAR reanalysis (1) to help indentify any change in the mid-latitude jet stream from 1948-2017 in response to the amplification of arctic temperatures relative to elsewhere on the globe in recent decades (2, 3).  
 
 ## Required packages
-iris
+iris /n
 pandas
 numpy
 math
