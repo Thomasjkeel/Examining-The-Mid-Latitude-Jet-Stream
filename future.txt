@@ -1,8 +1,15 @@
 To add: function that checks if lon and lat are represented in the data as the data is 2.5 * 2.5 degrees.  
 Also need function to report back the rounded up/down lon or lat 
 
+
+
+General Notes:
 (29*65*24seconds)/60/60 #seconds/minute/hours 
 # will take 12 hours to use the westerly count function on whole dataset
 # could divide this up into 12 1 hour sessions
 # each dataframe is 1kb so in total 1885kb (1.8mb)
 #29*65 = 1885 cells
+
+
+120W = 240 longitude
+140W = 220 longitude
