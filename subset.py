@@ -1,9 +1,27 @@
 import iris
 import datetime
-
+from dateutil.relativedelta import relativedelta
 
 iris.FUTURE.netcdf_promote = True
 iris.FUTURE.cell_datetime_objects=False
+
+
+def time_value(date, cube):
+    """function that takes a string of date (YYYY-MM-DD) and returns it in correct format, derived from the data"""
+    try:
+        time_units = cube.coord('time').units
+    except:
+        raise KeyboardInterrupt, 'cube has no coord time'
+    try:
+        year, month, day = date.split('-')
+        year, month, day = int(year), int(month), int(day)
+        val = time_units.date2num(datetime.datetime(year, month, day))
+    except:
+        raise KeyboardInterrupt, 'format of date needs to be: \"YYYY-MM-DD\"'
+
+    return val
+
+
 
 def subset_nc(filename, startdate, enddate, level=300, lat_min=20, lat_max=90, lon_min=180, lon_max=340):
 
