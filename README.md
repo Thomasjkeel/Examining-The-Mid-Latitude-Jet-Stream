@@ -1,5 +1,5 @@
 # Examining the mid-latitude jet-stream
-WORK IN PROGRESS   
+WORK IN PROGRESS    
 This project covers the use of wind speed and direction data (at 300hPa) (1) to help indentify any change in the mid-latitude jet stream from 1948-2017 in response to the relative amplification of arctic temperatures (2, 3). 
 Methods used in this repository include reading, mapping, ploting and analysing NetCDF4 files from NOAA (NCEP/NCAR reanalysis) using the Python programming language (2.7.13) and Jupyter Notebook. 
 
