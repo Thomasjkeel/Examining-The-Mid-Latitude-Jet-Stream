@@ -1,6 +1,7 @@
-# Working-with-NCEP-NCAR-in-Python
-Methods that assist with reading, mapping, ploting and analysing NetCDF4 files from NOAA (NCEP/NCAR reanalysis) into python. 
-The example in this repository covers the use of (u- and v- component) wind speed (at 300hPa) from the NCEP/NCAR reanalysis (1) to help indentify any change in the mid-latitude jet stream from 1948-2017 in response to the amplification of arctic temperatures relative to elsewhere on the globe in recent decades (2, 3).  
+# Examining the mid-latitude jet-stream
+This project covers the use of wind speed and direction data (at 300hPa) (1) to help indentify any change in the mid-latitude jet stream from 1948-2017 in response to the relative amplification of arctic temperatures (2, 3). 
+Methods used in this repository include reading, mapping, ploting and analysing NetCDF4 files from NOAA (NCEP/NCAR reanalysis) using the Python programming language (2.7.13) and Jupyter Notebook. 
+WORK IN PROGRESS
 
 ## Required packages
 iris  
