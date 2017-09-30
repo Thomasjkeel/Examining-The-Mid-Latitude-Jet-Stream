@@ -10,6 +10,8 @@ General Notes:
 # each dataframe is 1kb so in total 1885kb (1.8mb)
 #29*65 = 1885 cells
 
+20-90N, 180-340W
+
 
 120W = 240 longitude
 140W = 220 longitude
