@@ -38,17 +38,12 @@ def subset_nc(filename, startdate, enddate, level=None, lat_min=20, lat_max=90, 
         raise KeyboardInterrupt, 'need path to v-wind netcdf4 file'
 
     try:
-        year, month, day = startdate.split('-')
-        year, month, day = int(year), int(month), int(day)
-        time_units = subset.coord('time').units
-        s_val = time_units.date2num(datetime.datetime(year, month, day))
+        s_val = time_value(startdate, subset)
     except:
         raise KeyboardInterrupt, 'startdate needs to be in format: YYYY-MM-DD'
 
     try:
-        year, month, day = enddate.split('-')
-        year, month, day = int(year), int(month), int(day)+1 # add one it includes the last day
-        e_val = time_units.date2num(datetime.datetime(year, month, day))
+        e_val = time_value(enddate, subset)
     except:
         raise KeyboardInterrupt, 'enddate needs to be in format: YYYY-MM-DD'
 
