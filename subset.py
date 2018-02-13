@@ -23,7 +23,7 @@ def time_value(date, cube):
 
 
 
-def subset_nc(filename, startdate, enddate, level=None, level2=None lat_min=20, lat_max=90, lon_min=180, lon_max=340):
+def subset_nc(filename, startdate, enddate, level=None, level2=None, lat_min=20, lat_max=90, lon_min=180, lon_max=340):
 
     """A function to subnet the netCDF4 file (.nc) which can be adjusted to extract
      only the bits you need when making your dataframe"""
