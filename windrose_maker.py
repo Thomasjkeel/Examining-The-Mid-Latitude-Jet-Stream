@@ -4,10 +4,10 @@ from windrose import WindroseAxes
 import numpy as np
 import matplotlib.cm as cm
 
-def windrose_maker(vwnd_file, uwnd_file, startdate, enddate, level, lon, lat, title=None, filename=None, yticks=None, to_return=True): # save=False
+def windrose_maker(vwnd_file, uwnd_file, startdate, enddate, level, level2, lon, lat, title=None, filename=None, yticks=None, to_return=True): # save=False
     try:
         df = wind_direction_df(vwnd_file=vwnd_file, uwnd_file=uwnd_file, startdate=startdate, enddate=enddate,
-         level=level, lat=lat, lon=lon, s=False, ret=True)
+         level=level, level2=level2, lat=lat, lon=lon, s=False, ret=True)
 
     except:
         raise KeyboardInterrupt, 'dataframe maker has failed'
