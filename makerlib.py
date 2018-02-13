@@ -5,7 +5,7 @@ import math
 from subset import subset_nc
 
 
-def wind_direction_df(startdate, enddate, lon, lat, level, level2, vwnd_file, uwnd_file, 
+def wind_direction_df(startdate, enddate, lon, lat, level, vwnd_file, uwnd_file, level2=None, 
                      csv_name=None, pickle_name=None, s=True, ret=False):
 
     vwnd_lst = []
