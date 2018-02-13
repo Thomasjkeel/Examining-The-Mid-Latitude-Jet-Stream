@@ -48,11 +48,17 @@ def subset_nc(filename, startdate, enddate, level=None, level2=None lat_min=20, 
         raise KeyboardInterrupt, 'enddate needs to be in format: YYYY-MM-DD'
 
     try:
-        if level != None:
+        if level != None and level2 != None:
             subset = subset.extract(
                                             iris.Constraint(latitude=lambda cell: lat_min <= cell < lat_max+1,
                                             longitude=lambda cell: lon_min <= cell < lon_max+1,
                                             Level=lambda cell: level <= cell < level2,
+                                                        time=lambda cell: int(s_val) <= cell < int(e_val)))
+        elif level != None and level2 == None:
+            subset = subset.extract(
+                                            iris.Constraint(latitude=lambda cell: lat_min <= cell < lat_max+1,
+                                            longitude=lambda cell: lon_min <= cell < lon_max+1,
+                                            Level=lambda cell: level <= cell < level+1,
                                                         time=lambda cell: int(s_val) <= cell < int(e_val)))
         else:
             subset = subset.extract(
