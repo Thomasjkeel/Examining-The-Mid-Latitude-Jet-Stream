@@ -5,7 +5,7 @@ import math
 from subset import subset_nc
 
 
-def wind_direction_df(startdate, enddate, lon, lat, level, vwnd_file, uwnd_file,
+def wind_direction_df(startdate, enddate, lon, lat, level, level2, vwnd_file, uwnd_file,
                      csv_name=None, pickle_name=None, s=True, ret=False):
 
     vwnd_lst = []
@@ -21,13 +21,13 @@ def wind_direction_df(startdate, enddate, lon, lat, level, vwnd_file, uwnd_file,
 
     try:
         vwind = subset_nc(filename=vwnd_file, startdate=startdate, enddate=enddate,
-         level=level, lat_min=lat, lat_max=lat, lon_min=lon, lon_max=lon)
+         level=level,level2=level2, lat_min=lat, lat_max=lat, lon_min=lon, lon_max=lon)
     except:
         raise KeyboardInterrupt, 'need path to v-wind netcdf4 file OR try setting iris.FUTURE.cell_datetime_objects to False'
 
     try:
         uwind = subset_nc(filename=uwnd_file,startdate=startdate, enddate=enddate,
-         level=level, lat_min=lat, lat_max=lat, lon_min=lon, lon_max=lon)
+         level=level, level2=level2, lat_min=lat, lat_max=lat, lon_min=lon, lon_max=lon)
     except:
         raise KeyboardInterrupt, 'need path to u-wind netcdf4 file'
 
