@@ -23,7 +23,7 @@ def time_value(date, cube):
 
 
 
-def subset_nc(filename, startdate, enddate, level=None, lat_min=20, lat_max=90, lon_min=180, lon_max=340):
+def subset_nc(filename, startdate, enddate, level=None, level2=None, lat_min=20, lat_max=90, lon_min=180, lon_max=340):
 
     """A function to subnet the netCDF4 file (.nc) which can be adjusted to extract
      only the bits you need when making your dataframe"""
@@ -48,17 +48,23 @@ def subset_nc(filename, startdate, enddate, level=None, lat_min=20, lat_max=90, 
         raise KeyboardInterrupt, 'enddate needs to be in format: YYYY-MM-DD'
 
     try:
-        if level != None:
+        if level != None and level2 != None:
             subset = subset.extract(
-                                            iris.Constraint(latitude=lambda cell: lat_min <= cell < lat_max+1,
-                                            longitude=lambda cell: lon_min <= cell < lon_max+1,
-                                            Level=lambda cell: level <= cell < level+1,
-                                                        time=lambda cell: int(s_val) <= cell < int(e_val)))
+                                            iris.Constraint(latitude=lambda cell: lat_min <= cell <= lat_max,
+                                            longitude=lambda cell: lon_min <= cell <= lon_max,
+                                            pressure_level=lambda cell: level <= cell <= level2,
+                                                        time=lambda cell: int(s_val) <= cell <= int(e_val)))
+        elif level != None and level2 == None:
+            subset = subset.extract(
+                                            iris.Constraint(latitude=lambda cell: lat_min <= cell <= lat_max,
+                                            longitude=lambda cell: lon_min <= cell <= lon_max,
+                                            pressure_level=lambda cell: level <= cell <= level,
+                                                        time=lambda cell: int(s_val) <= cell <= int(e_val)))
         else:
             subset = subset.extract(
-                                            iris.Constraint(latitude=lambda cell: lat_min <= cell < lat_max+1,
-                                            longitude=lambda cell: lon_min <= cell < lon_max+1,
-                                                        time=lambda cell: int(s_val) <= cell < int(e_val)))
+                                            iris.Constraint(latitude=lambda cell: lat_min <= cell <= lat_max,
+                                            longitude=lambda cell: lon_min <= cell <= lon_max,
+                                                        time=lambda cell: int(s_val) <= cell <= int(e_val)))
     except:
         raise KeyboardInterrupt, 'variables out of range of the data\'s dimensions OR try setting iris.FUTURE.cell_datetime_objects to False'
 

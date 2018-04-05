@@ -5,7 +5,7 @@ import math
 from subset import subset_nc
 
 
-def wind_direction_df(startdate, enddate, lon, lat, level, vwnd_file, uwnd_file,
+def wind_direction_df(startdate, enddate, lon, lat, level, vwnd_file, uwnd_file, level2=None,
                      csv_name=None, pickle_name=None, s=True, ret=False):
 
     vwnd_lst = []
@@ -21,37 +21,72 @@ def wind_direction_df(startdate, enddate, lon, lat, level, vwnd_file, uwnd_file,
 
     try:
         vwind = subset_nc(filename=vwnd_file, startdate=startdate, enddate=enddate,
-         level=level, lat_min=lat, lat_max=lat, lon_min=lon, lon_max=lon)
+         level=level,level2=level2, lat_min=lat, lat_max=lat, lon_min=lon, lon_max=lon)
     except:
         raise KeyboardInterrupt, 'need path to v-wind netcdf4 file OR try setting iris.FUTURE.cell_datetime_objects to False'
 
     try:
         uwind = subset_nc(filename=uwnd_file,startdate=startdate, enddate=enddate,
-         level=level, lat_min=lat, lat_max=lat, lon_min=lon, lon_max=lon)
+         level=level, level2=level2, lat_min=lat, lat_max=lat, lon_min=lon, lon_max=lon)
     except:
         raise KeyboardInterrupt, 'need path to u-wind netcdf4 file'
 
 
     time_c = vwind.coord('time')
+    
+    vws = pd.DataFrame()
 
-    for i in range(len(vwind.coord('time').points)):
+    for p in range(len(vwind.coord('pressure_level').points)):
         iris.FUTURE.cell_datetime_objects = True
-        v_df = vwind.data[i]
-        vwnd_lst.append(v_df)
+        pressure_level = vwind.coord('pressure_level').points[p] 
+        vwnd_lst = []
+        date_lst = []
+        for t in range(len(vwind.coord('time').points)):
+            if len(vwind.coord('pressure_level').points) != 1:
+                v_df = vwind.data[t][p]
+                vwnd_lst.append(v_df)
+                b = str(time_c.cell(t))[:10] # removes 00:00:00 from dates
+                date_lst.append(b)
+            else: 
+                v_df = vwind.data[t]
+                vwnd_lst.append(v_df)
+                b = str(time_c.cell(t))[:10] # removes 00:00:00 from dates
+                date_lst.append(b)
 
-        u_df = uwind.data[i]
-        uwnd_lst.append(u_df)
+            df = pd.DataFrame(vwnd_lst,columns=['mean v-wind (m/s)'])
+            df['date'] = pd.Series(date_lst)
+            df['pressure level'] = pressure_level
+        vws = vws.append(df)
+        
+    uws = pd.DataFrame()  
+    for p in range(len(uwind.coord('pressure_level').points)):
+        iris.FUTURE.cell_datetime_objects = True
+        pressure_level = uwind.coord('pressure_level').points[p] 
+        uwnd_lst = []
+        date_lst = []
+        for t in range(len(uwind.coord('time').points)):
+            if len(uwind.coord('pressure_level').points) != 1:
+                u_df = uwind.data[t][p]
+                uwnd_lst.append(u_df)
+                b = str(time_c.cell(t))[:10] # removes 00:00:00 from dates
+                date_lst.append(b)
+            else: 
+                u_df = uwind.data[t]
+                uwnd_lst.append(u_df)
+                b = str(time_c.cell(t))[:10] # removes 00:00:00 from dates
+                date_lst.append(b)
 
-        b = str(time_c.cell(i))[:10] # removes 00:00:00 from dates
-        date_lst.append(b)
+            df = pd.DataFrame(uwnd_lst,columns=['mean u-wind (m/s)'])
+            df['date_u'] = pd.Series(date_lst)
+            df['pressure level'] = pressure_level
+        uws = uws.append(df)
+        
+    vws = vws.reset_index()
+    uws = uws.reset_index()
 
-    vws = pd.DataFrame(vwnd_lst,columns=['mean v-wind (m/s)'])
-    uws = pd.DataFrame(uwnd_lst,columns=['mean u-wind (m/s)'])
-    dates = pd.DataFrame(date_lst,columns=['date'])
-
-    df = vws.join(uws)
-    df = df.join(dates)
-
+    df = pd.concat([vws, uws], axis=1)
+    df = df.drop('date_u',axis=1)
+    
     for i in range(0, len(df)):
         u_ms = df['mean u-wind (m/s)'][i]
         v_ms = df['mean v-wind (m/s)'][i]
@@ -126,10 +161,10 @@ def wind_direction_df(startdate, enddate, lon, lat, level, vwnd_file, uwnd_file,
 
     df.index = df["date"]
     del df['date']
-
-    firstDate = df.index[0]
-    lastDate = df.index[len(df['mean u-wind (m/s)'])-1]
-    df = df.reindex(index=pd.date_range(start = firstDate, end = lastDate), fill_value = None)
+    
+   # firstDate = df.index[0]
+    #lastDate = df.index[len(df['mean u-wind (m/s)'])-1]
+    #df = df.reindex(index=pd.date_range(start = firstDate, end = lastDate), fill_value = None)
 
     if s == True:
         if csv_name != None:

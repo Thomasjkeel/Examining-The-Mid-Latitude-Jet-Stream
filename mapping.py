@@ -8,7 +8,7 @@ import iris
 
 
 def map_maker(data, date_needed, level, llat=20, llon=180, ulat=90, ulon=320, vmin=-60, vmax=60, colorbar=True):
-    subset = subset_nc(filename=data, startdate=date_needed, enddate=date_needed, level=300, lat_min=llat, lon_min=llon,
+    subset = subset_nc(filename=data, startdate=date_needed, enddate=date_needed, level=level, lat_min=llat, lon_min=llon,
      lat_max=ulat, lon_max=ulon)
     iris.io.save(subset,'delete_this.nc')
     fh = Dataset('delete_this.nc')

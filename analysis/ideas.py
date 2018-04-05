@@ -1,13 +1,13 @@
 import pandas as pd
 from makerlib import wind_direction_df
 
-def westerly_count(vwnd_file, uwnd_file, startdate, enddate, level, lon, lat):
+def westerly_count(vwnd_file, uwnd_file, startdate, enddate, level, level2, lon, lat):
     """Counts of days where wind is flowing westerly (W, WSW, WNW) which suggests that
     the mid-latitude jet-stream is not propogating vertically over this cell.
     """
     df = wind_direction_df(vwnd_file=vwnd_file, uwnd_file=uwnd_file,
                            startdate=startdate, enddate=enddate,
-                           level=level, lon=lon, lat=lat, s=False, ret=True)
+                           level=level, level2=level2 lon=lon, lat=lat, s=False, ret=True)
 
     dfW = df.loc[((df['cardinal direction'].str.startswith('W') == True))]
     dicts = {}

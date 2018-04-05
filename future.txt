@@ -1,6 +1,7 @@
 To add: function that checks if lon and lat are represented in the data as the data is 2.5 * 2.5 degrees.  
 Also need function to report back the rounded up/down lon or lat 
 
+Also need to add way to determine level (Level or Pressure_level)
 
 
 General Notes:
