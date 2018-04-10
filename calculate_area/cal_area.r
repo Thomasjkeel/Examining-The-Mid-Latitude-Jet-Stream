@@ -22,4 +22,8 @@ WNA = sum(a[119:149,230:254])
 # Gets slice of longitudinal cells in kilometres
 # from 80 N to 20 N
 area <- a[10:70,1]
+<<<<<<< HEAD
 write.csv(area, file = '/Users/thomaskeel/Desktop/area.csv')
+=======
+write.csv(area, file = 'path/to/Desktop/area.csv')
+>>>>>>> origin/master
