@@ -23,5 +23,5 @@ server.retrieve({
                 "area": "80/-180/20/-20",    # North America study region
                 "grid": "1.0/1.0",  # 1.0 longitude by 1.0 latitude
                 "format": "netcdf",    # Convert the output file from the default GRIB format to NetCDF format. Requires "grid" to be set to a regular lat/lon grid.
-                "target": "data/IGSData_uwind.nc",    # The output file name. Set this to whatever you like.
+                "target": "path/to/data/IGSData_uwind.nc",    # The output file name. Set this to whatever you like.
                 })
